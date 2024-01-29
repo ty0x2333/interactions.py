@@ -789,7 +789,7 @@ class ComponentContext(InteractionContext, ModalMixin):
 
         message_payload = process_message_payload(
             content=content,
-            embeds=embeds or embed,
+            embeds=embeds if (isinstance(embeds, list) and len(embeds) == 0) or embed else embed,
             components=components,
             allowed_mentions=allowed_mentions,
             tts=tts,
