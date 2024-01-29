@@ -2,23 +2,18 @@ import abc
 import datetime
 import re
 import typing
-from typing_extensions import Self
 
 import discord_typings
 from aiohttp import FormData
+from typing_extensions import Self
 
 from interactions.client import const
 from interactions.client.const import get_logger, MISSING
-from interactions.models.discord.components import BaseComponent
-from interactions.models.discord.file import UPLOADABLE_TYPE
-from interactions.models.discord.sticker import Sticker
-from interactions.models.discord.user import Member, User
-
-from interactions.models.internal.command import BaseCommand
-from interactions.client.mixins.modal import ModalMixin
-
 from interactions.client.errors import HTTPException, AlreadyDeferred, AlreadyResponded
+from interactions.client.mixins.modal import ModalMixin
 from interactions.client.mixins.send import SendMixin
+from interactions.models.discord.components import BaseComponent
+from interactions.models.discord.embed import Embed
 from interactions.models.discord.enums import (
     Permissions,
     MessageFlags,
@@ -26,6 +21,7 @@ from interactions.models.discord.enums import (
     ComponentType,
     CommandType,
 )
+from interactions.models.discord.file import UPLOADABLE_TYPE
 from interactions.models.discord.message import (
     AllowedMentions,
     Attachment,
@@ -34,7 +30,8 @@ from interactions.models.discord.message import (
     process_message_payload,
 )
 from interactions.models.discord.snowflake import Snowflake, Snowflake_Type, to_snowflake, to_optional_snowflake
-from interactions.models.discord.embed import Embed
+from interactions.models.discord.sticker import Sticker
+from interactions.models.discord.user import Member, User
 from interactions.models.internal.application_commands import (
     OptionType,
     CallbackType,
@@ -42,6 +39,7 @@ from interactions.models.internal.application_commands import (
     SlashCommandOption,
     InteractionCommand,
 )
+from interactions.models.internal.command import BaseCommand
 
 __all__ = (
     "AutocompleteContext",
@@ -54,7 +52,6 @@ __all__ = (
     "Resolved",
     "SlashContext",
 )
-
 
 if typing.TYPE_CHECKING:
     import interactions
@@ -84,12 +81,12 @@ class Resolved:
     def __bool__(self) -> bool:
         """Returns whether any resolved data is present."""
         return (
-            bool(self.channels)
-            or bool(self.members)
-            or bool(self.users)
-            or bool(self.roles)
-            or bool(self.messages)
-            or bool(self.attachments)
+                bool(self.channels)
+                or bool(self.members)
+                or bool(self.users)
+                or bool(self.roles)
+                or bool(self.messages)
+                or bool(self.attachments)
         )
 
     def get(self, snowflake: Snowflake | str, default: typing.Any = None) -> typing.Any:
@@ -419,7 +416,7 @@ class InteractionContext(BaseInteractionContext, SendMixin):
         self.ephemeral = ephemeral
 
     async def _send_http_request(
-        self, message_payload: dict, files: typing.Iterable["UPLOADABLE_TYPE"] | None = None
+            self, message_payload: dict, files: typing.Iterable["UPLOADABLE_TYPE"] | None = None
     ) -> dict:
         if const.has_client_feature("FOLLOWUP_INTERACTIONS_FOR_IMAGES") and not self.deferred and not self.responded:
             # experimental bypass for discords broken image proxy
@@ -462,39 +459,39 @@ class InteractionContext(BaseInteractionContext, SendMixin):
         return message_data
 
     async def send(
-        self,
-        content: typing.Optional[str] = None,
-        *,
-        embeds: typing.Optional[
-            typing.Union[typing.Iterable[typing.Union["Embed", dict]], typing.Union["Embed", dict]]
-        ] = None,
-        embed: typing.Optional[typing.Union["Embed", dict]] = None,
-        components: typing.Optional[
-            typing.Union[
-                typing.Iterable[typing.Iterable[typing.Union["BaseComponent", dict]]],
-                typing.Iterable[typing.Union["BaseComponent", dict]],
-                "BaseComponent",
-                dict,
-            ]
-        ] = None,
-        stickers: typing.Optional[
-            typing.Union[
-                typing.Iterable[typing.Union["Sticker", "Snowflake_Type"]],
-                "Sticker",
-                "Snowflake_Type",
-            ]
-        ] = None,
-        allowed_mentions: typing.Optional[typing.Union["AllowedMentions", dict]] = None,
-        reply_to: typing.Optional[typing.Union["MessageReference", "Message", dict, "Snowflake_Type"]] = None,
-        files: typing.Optional[typing.Union["UPLOADABLE_TYPE", typing.Iterable["UPLOADABLE_TYPE"]]] = None,
-        file: typing.Optional["UPLOADABLE_TYPE"] = None,
-        tts: bool = False,
-        suppress_embeds: bool = False,
-        silent: bool = False,
-        flags: typing.Optional[typing.Union[int, "MessageFlags"]] = None,
-        delete_after: typing.Optional[float] = None,
-        ephemeral: bool = False,
-        **kwargs: typing.Any,
+            self,
+            content: typing.Optional[str] = None,
+            *,
+            embeds: typing.Optional[
+                typing.Union[typing.Iterable[typing.Union["Embed", dict]], typing.Union["Embed", dict]]
+            ] = None,
+            embed: typing.Optional[typing.Union["Embed", dict]] = None,
+            components: typing.Optional[
+                typing.Union[
+                    typing.Iterable[typing.Iterable[typing.Union["BaseComponent", dict]]],
+                    typing.Iterable[typing.Union["BaseComponent", dict]],
+                    "BaseComponent",
+                    dict,
+                ]
+            ] = None,
+            stickers: typing.Optional[
+                typing.Union[
+                    typing.Iterable[typing.Union["Sticker", "Snowflake_Type"]],
+                    "Sticker",
+                    "Snowflake_Type",
+                ]
+            ] = None,
+            allowed_mentions: typing.Optional[typing.Union["AllowedMentions", dict]] = None,
+            reply_to: typing.Optional[typing.Union["MessageReference", "Message", dict, "Snowflake_Type"]] = None,
+            files: typing.Optional[typing.Union["UPLOADABLE_TYPE", typing.Iterable["UPLOADABLE_TYPE"]]] = None,
+            file: typing.Optional["UPLOADABLE_TYPE"] = None,
+            tts: bool = False,
+            suppress_embeds: bool = False,
+            silent: bool = False,
+            flags: typing.Optional[typing.Union[int, "MessageFlags"]] = None,
+            delete_after: typing.Optional[float] = None,
+            ephemeral: bool = False,
+            **kwargs: typing.Any,
     ) -> "interactions.Message":
         """
         Send a message.
@@ -559,31 +556,31 @@ class InteractionContext(BaseInteractionContext, SendMixin):
         )
 
     async def edit(
-        self,
-        message: "Snowflake_Type" = "@original",
-        *,
-        content: typing.Optional[str] = None,
-        embeds: typing.Optional[
-            typing.Union[typing.Iterable[typing.Union["Embed", dict]], typing.Union["Embed", dict]]
-        ] = None,
-        embed: typing.Optional[typing.Union["Embed", dict]] = None,
-        components: typing.Optional[
-            typing.Union[
-                typing.Iterable[typing.Iterable[typing.Union["BaseComponent", dict]]],
-                typing.Iterable[typing.Union["BaseComponent", dict]],
-                "BaseComponent",
-                dict,
-            ]
-        ] = None,
-        attachments: typing.Optional[typing.Sequence[Attachment | dict]] = None,
-        allowed_mentions: typing.Optional[typing.Union["AllowedMentions", dict]] = None,
-        files: typing.Optional[typing.Union["UPLOADABLE_TYPE", typing.Iterable["UPLOADABLE_TYPE"]]] = None,
-        file: typing.Optional["UPLOADABLE_TYPE"] = None,
-        tts: bool = False,
+            self,
+            message: "Snowflake_Type" = "@original",
+            *,
+            content: typing.Optional[str] = None,
+            embeds: typing.Optional[
+                typing.Union[typing.Iterable[typing.Union["Embed", dict]], typing.Union["Embed", dict]]
+            ] = None,
+            embed: typing.Optional[typing.Union["Embed", dict]] = None,
+            components: typing.Optional[
+                typing.Union[
+                    typing.Iterable[typing.Iterable[typing.Union["BaseComponent", dict]]],
+                    typing.Iterable[typing.Union["BaseComponent", dict]],
+                    "BaseComponent",
+                    dict,
+                ]
+            ] = None,
+            attachments: typing.Optional[typing.Sequence[Attachment | dict]] = None,
+            allowed_mentions: typing.Optional[typing.Union["AllowedMentions", dict]] = None,
+            files: typing.Optional[typing.Union["UPLOADABLE_TYPE", typing.Iterable["UPLOADABLE_TYPE"]]] = None,
+            file: typing.Optional["UPLOADABLE_TYPE"] = None,
+            tts: bool = False,
     ) -> "interactions.Message":
         message_payload = process_message_payload(
             content=content,
-            embeds=embeds or embed,
+            embeds=embeds if (isinstance(embeds, list) and len(embeds) == 0) or embed else embed,
             components=components,
             allowed_mentions=allowed_mentions,
             attachments=attachments,
@@ -690,17 +687,17 @@ class ComponentContext(InteractionContext, ModalMixin):
         searches = {
             "users": instance.component_type in (ComponentType.USER_SELECT, ComponentType.MENTIONABLE_SELECT),
             "members": instance.guild_id
-            and instance.component_type in (ComponentType.USER_SELECT, ComponentType.MENTIONABLE_SELECT),
+                       and instance.component_type in (ComponentType.USER_SELECT, ComponentType.MENTIONABLE_SELECT),
             "channels": instance.component_type in (ComponentType.CHANNEL_SELECT, ComponentType.MENTIONABLE_SELECT),
             "roles": instance.guild_id
-            and instance.component_type in (ComponentType.ROLE_SELECT, ComponentType.MENTIONABLE_SELECT),
+                     and instance.component_type in (ComponentType.ROLE_SELECT, ComponentType.MENTIONABLE_SELECT),
         }
 
         if instance.component_type in (
-            ComponentType.USER_SELECT,
-            ComponentType.CHANNEL_SELECT,
-            ComponentType.ROLE_SELECT,
-            ComponentType.MENTIONABLE_SELECT,
+                ComponentType.USER_SELECT,
+                ComponentType.CHANNEL_SELECT,
+                ComponentType.ROLE_SELECT,
+                ComponentType.MENTIONABLE_SELECT,
         ):
             for i, value in enumerate(instance.values):
                 if re.match(r"\d{17,}", value):
@@ -747,25 +744,25 @@ class ComponentContext(InteractionContext, ModalMixin):
         self.editing_origin = edit_origin
 
     async def edit_origin(
-        self,
-        *,
-        content: typing.Optional[str] = None,
-        embeds: typing.Optional[
-            typing.Union[typing.Iterable[typing.Union["Embed", dict]], typing.Union["Embed", dict]]
-        ] = None,
-        embed: typing.Optional[typing.Union["Embed", dict]] = None,
-        components: typing.Optional[
-            typing.Union[
-                typing.Iterable[typing.Iterable[typing.Union["BaseComponent", dict]]],
-                typing.Iterable[typing.Union["BaseComponent", dict]],
-                "BaseComponent",
-                dict,
-            ]
-        ] = None,
-        allowed_mentions: typing.Optional[typing.Union["AllowedMentions", dict]] = None,
-        files: typing.Optional[typing.Union["UPLOADABLE_TYPE", typing.Iterable["UPLOADABLE_TYPE"]]] = None,
-        file: typing.Optional["UPLOADABLE_TYPE"] = None,
-        tts: bool = False,
+            self,
+            *,
+            content: typing.Optional[str] = None,
+            embeds: typing.Optional[
+                typing.Union[typing.Iterable[typing.Union["Embed", dict]], typing.Union["Embed", dict]]
+            ] = None,
+            embed: typing.Optional[typing.Union["Embed", dict]] = None,
+            components: typing.Optional[
+                typing.Union[
+                    typing.Iterable[typing.Iterable[typing.Union["BaseComponent", dict]]],
+                    typing.Iterable[typing.Union["BaseComponent", dict]],
+                    "BaseComponent",
+                    dict,
+                ]
+            ] = None,
+            allowed_mentions: typing.Optional[typing.Union["AllowedMentions", dict]] = None,
+            files: typing.Optional[typing.Union["UPLOADABLE_TYPE", typing.Iterable["UPLOADABLE_TYPE"]]] = None,
+            file: typing.Optional["UPLOADABLE_TYPE"] = None,
+            tts: bool = False,
     ) -> "Message":
         """
         Edits the original message of the component.
@@ -900,7 +897,7 @@ class AutocompleteContext(BaseInteractionContext):
         return
 
     async def send(
-        self, choices: typing.Iterable[str | int | float | dict[str, int | float | str] | SlashCommandChoice]
+            self, choices: typing.Iterable[str | int | float | dict[str, int | float | str] | SlashCommandChoice]
     ) -> None:
         """
         Send your autocomplete choices to discord. Choices must be either a list of strings, or a dictionary following the following format:

@@ -429,10 +429,10 @@ class Message(BaseMessage):
         return self._client.cache.get_message(self._channel_id, self._referenced_message_id)
 
     def contains_mention(
-        self,
-        query: "str | re.Pattern[str] | models.BaseUser | models.BaseChannel | models.Role",
-        *,
-        tag_as_mention: bool = False,
+            self,
+            query: "str | re.Pattern[str] | models.BaseUser | models.BaseChannel | models.Role",
+            *,
+            tag_as_mention: bool = False,
     ) -> bool:
         """
         Check whether the message contains the query or not.
@@ -543,7 +543,7 @@ class Message(BaseMessage):
                     int(self.timestamp.timestamp() * 1000)
                     % len(GUILD_WELCOME_MESSAGES)
                     # This is how Discord calculates the welcome message.
-                ].format(self.author.mention)
+                    ].format(self.author.mention)
             case MessageType.THREAD_CREATED:
                 return f"{self.author.mention} started a thread: {self.thread.mention}. See all **threads**."
             case MessageType.CHANNEL_FOLLOW_ADD:
@@ -592,26 +592,26 @@ class Message(BaseMessage):
         return f"discord://-/channels/{self._guild_id or '@me'}/{self._channel_id}/{self.id}"
 
     async def edit(
-        self,
-        *,
-        content: Optional[str] = None,
-        embeds: Optional[Union[Sequence[Union["models.Embed", dict]], Union["models.Embed", dict]]] = None,
-        embed: Optional[Union["models.Embed", dict]] = None,
-        components: Optional[
-            Union[
-                Sequence[Sequence[Union["models.BaseComponent", dict]]],
-                Sequence[Union["models.BaseComponent", dict]],
-                "models.BaseComponent",
-                dict,
-            ]
-        ] = None,
-        allowed_mentions: Optional[Union[AllowedMentions, dict]] = None,
-        attachments: Optional[Optional[Sequence[Union[Attachment, dict]]]] = None,
-        files: Optional[Union[UPLOADABLE_TYPE, Sequence[UPLOADABLE_TYPE]]] = None,
-        file: Optional[UPLOADABLE_TYPE] = None,
-        tts: bool = False,
-        flags: Optional[Union[int, MessageFlags]] = None,
-        context: "InteractionContext | None" = None,
+            self,
+            *,
+            content: Optional[str] = None,
+            embeds: Optional[Union[Sequence[Union["models.Embed", dict]], Union["models.Embed", dict]]] = None,
+            embed: Optional[Union["models.Embed", dict]] = None,
+            components: Optional[
+                Union[
+                    Sequence[Sequence[Union["models.BaseComponent", dict]]],
+                    Sequence[Union["models.BaseComponent", dict]],
+                    "models.BaseComponent",
+                    dict,
+                ]
+            ] = None,
+            allowed_mentions: Optional[Union[AllowedMentions, dict]] = None,
+            attachments: Optional[Optional[Sequence[Union[Attachment, dict]]]] = None,
+            files: Optional[Union[UPLOADABLE_TYPE, Sequence[UPLOADABLE_TYPE]]] = None,
+            file: Optional[UPLOADABLE_TYPE] = None,
+            tts: bool = False,
+            flags: Optional[Union[int, MessageFlags]] = None,
+            context: "InteractionContext | None" = None,
     ) -> "Message":
         """
         Edits the message.
@@ -648,7 +648,7 @@ class Message(BaseMessage):
             )
         message_payload = process_message_payload(
             content=content,
-            embeds=embeds or embed,
+            embeds=embeds if embeds is not None else embed,
             components=components,
             allowed_mentions=allowed_mentions,
             attachments=attachments,
@@ -688,11 +688,11 @@ class Message(BaseMessage):
             return await _delete()
 
     async def reply(
-        self,
-        content: Optional[str] = None,
-        embeds: Optional[Union[List[Union["models.Embed", dict]], Union["models.Embed", dict]]] = None,
-        embed: Optional[Union["models.Embed", dict]] = None,
-        **kwargs: Mapping[str, Any],
+            self,
+            content: Optional[str] = None,
+            embeds: Optional[Union[List[Union["models.Embed", dict]], Union["models.Embed", dict]]] = None,
+            embed: Optional[Union["models.Embed", dict]] = None,
+            **kwargs: Mapping[str, Any],
     ) -> "Message":
         """
         Reply to this message, takes all the same attributes as `send`.
@@ -710,10 +710,10 @@ class Message(BaseMessage):
         return await self.channel.send(content=content, reply_to=self, embeds=embeds or embed, **kwargs)
 
     async def create_thread(
-        self,
-        name: str,
-        auto_archive_duration: Union[AutoArchiveDuration, int] = AutoArchiveDuration.ONE_DAY,
-        reason: Optional[str] = None,
+            self,
+            name: str,
+            auto_archive_duration: Union[AutoArchiveDuration, int] = AutoArchiveDuration.ONE_DAY,
+            reason: Optional[str] = None,
     ) -> "models.TYPE_THREAD_CHANNEL":
         """
         Create a thread from this message.
@@ -757,10 +757,10 @@ class Message(BaseMessage):
             return self._client.cache.place_message_data(message_data)
 
     async def fetch_reaction(
-        self,
-        emoji: Union["models.PartialEmoji", dict, str],
-        limit: Absent[int] = MISSING,
-        after: Absent["Snowflake_Type"] = MISSING,
+            self,
+            emoji: Union["models.PartialEmoji", dict, str],
+            limit: Absent[int] = MISSING,
+            after: Absent["Snowflake_Type"] = MISSING,
     ) -> List["models.User"]:
         """
         Fetches reactions of a specific emoji from this message.
@@ -791,9 +791,9 @@ class Message(BaseMessage):
         await self._client.http.create_reaction(self._channel_id, self.id, emoji)
 
     async def remove_reaction(
-        self,
-        emoji: Union["models.PartialEmoji", dict, str],
-        member: Optional[Union["models.Member", "models.User", "Snowflake_Type"]] = MISSING,
+            self,
+            emoji: Union["models.PartialEmoji", dict, str],
+            member: Optional[Union["models.Member", "models.User", "Snowflake_Type"]] = MISSING,
     ) -> None:
         """
         Remove a specific reaction that a user reacted with.
@@ -874,7 +874,7 @@ def process_allowed_mentions(allowed_mentions: Optional[Union[AllowedMentions, d
 
 
 def process_message_reference(
-    message_reference: Optional[Union[MessageReference, Message, dict, "Snowflake_Type"]]
+        message_reference: Optional[Union[MessageReference, Message, dict, "Snowflake_Type"]]
 ) -> Optional[dict]:
     """
     Process mention references into a dictionary.
@@ -908,25 +908,25 @@ def process_message_reference(
 
 
 def process_message_payload(
-    content: Optional[str] = None,
-    embeds: Optional[Union[List[Union["models.Embed", dict]], Union["models.Embed", dict]]] = None,
-    components: Optional[
-        Union[
-            List[List[Union["models.BaseComponent", dict]]],
-            List[Union["models.BaseComponent", dict]],
-            "models.BaseComponent",
-            dict,
-        ]
-    ] = None,
-    stickers: Optional[
-        Union[List[Union["models.Sticker", "Snowflake_Type"]], "models.Sticker", "Snowflake_Type"]
-    ] = None,
-    allowed_mentions: Optional[Union[AllowedMentions, dict]] = None,
-    reply_to: Optional[Union[MessageReference, Message, dict, "Snowflake_Type"]] = None,
-    attachments: Optional[List[Union[Attachment, dict]]] = None,
-    tts: bool = False,
-    flags: Optional[Union[int, MessageFlags]] = None,
-    **kwargs,
+        content: Optional[str] = None,
+        embeds: Optional[Union[List[Union["models.Embed", dict]], Union["models.Embed", dict]]] = None,
+        components: Optional[
+            Union[
+                List[List[Union["models.BaseComponent", dict]]],
+                List[Union["models.BaseComponent", dict]],
+                "models.BaseComponent",
+                dict,
+            ]
+        ] = None,
+        stickers: Optional[
+            Union[List[Union["models.Sticker", "Snowflake_Type"]], "models.Sticker", "Snowflake_Type"]
+        ] = None,
+        allowed_mentions: Optional[Union[AllowedMentions, dict]] = None,
+        reply_to: Optional[Union[MessageReference, Message, dict, "Snowflake_Type"]] = None,
+        attachments: Optional[List[Union[Attachment, dict]]] = None,
+        tts: bool = False,
+        flags: Optional[Union[int, MessageFlags]] = None,
+        **kwargs,
 ) -> dict:
     """
     Format message content for it to be ready to send discord.
@@ -948,7 +948,7 @@ def process_message_payload(
     """
     embeds = process_embeds(embeds)
     if isinstance(embeds, list):
-        embeds = embeds if all(e is not None for e in embeds) else None
+        embeds = embeds if len(embeds) == 0 or all(e is not None for e in embeds) else None
 
     components = models.process_components(components)
     if stickers:
