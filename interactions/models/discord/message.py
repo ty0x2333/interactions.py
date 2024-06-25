@@ -649,7 +649,7 @@ class Message(BaseMessage):
             )
         message_payload = process_message_payload(
             content=content,
-            embeds=embeds or embed,
+            embeds=embeds if embeds is not None else embed,
             components=components,
             allowed_mentions=allowed_mentions,
             attachments=attachments,
@@ -955,7 +955,7 @@ def process_message_payload(
     """
     embeds = process_embeds(embeds)
     if isinstance(embeds, list):
-        embeds = embeds if all(e is not None for e in embeds) else None
+        embeds = embeds if len(embeds) == 0 or all(e is not None for e in embeds) else None
 
     components = models.process_components(components)
     if stickers:

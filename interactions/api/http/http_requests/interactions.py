@@ -72,6 +72,7 @@ class InteractionRequests(CanRequest):
             return await self.request(
                 Route("GET", "/applications/{application_id}/commands", application_id=application_id),
                 params={"with_localizations": int(with_localisations)},
+                timeout=None
             )
         return await self.request(
             Route(
@@ -81,6 +82,7 @@ class InteractionRequests(CanRequest):
                 guild_id=guild_id,
             ),
             params={"with_localizations": int(with_localisations)},
+            timeout=None
         )
 
     async def overwrite_application_commands(
